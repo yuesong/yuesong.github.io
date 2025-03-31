@@ -25,14 +25,14 @@
 
         // Function to render the Mermaid diagram
         function renderMermaidDiagram() {
+            // mermaidCode is already URL decoded
             const mermaidCode = getQueryParameter('code');
             if (mermaidCode) {
-                // Decode the URL-encoded Mermaid code
-                const decodedCode = decodeURIComponent(mermaidCode);
                 // Set the Mermaid code in the HTML
-                document.getElementById('mermaid').innerHTML = decodedCode;
+                document.getElementById('mermaid').innerHTML = mermaidCode;
             } else {
-                document.getElementById('mermaid').innerHTML = 'No Mermaid code provided.';
+                // use valid minimal mermaid syntax to show error message for missing "code" query parameters
+                document.getElementById('mermaid').innerHTML = 'graph TD; 1("code query parameter is missing");';
             }
         }
 
