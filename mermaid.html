@@ -16,6 +16,8 @@
             text-align: center;
         }
     </style>
+    <!-- Load LZString globally -->
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
     <script type="module">
         // Function to get query parameters
         function getQueryParameter(name) {
@@ -25,9 +27,19 @@
 
         // Function to render the Mermaid diagram
         function renderMermaidDiagram() {
-            // mermaidCode is already URL decoded
-            const mermaidCode = getQueryParameter('code');
-            if (mermaidCode) {
+            const inputMermaidCode = getQueryParameter("code");
+            const isCompressed = getQueryParameter("compressed") === "1";
+
+            if (inputMermaidCode) {
+              let mermaidCode;
+              try {
+                mermaidCode = isCompressed
+                    ? LZString.decompressFromEncodedURIComponent(inputMermaidCode)
+                    : inputMermaidCode;
+              } catch (err) {
+                // use valid minimal mermaid syntax to show error message for failure to decompress inputMermaidCode
+                mermaidCode = `graph TD; 1("Failed to decompress: ${err.message}")`;
+              }
                 // Set the Mermaid code in the HTML
                 document.getElementById('mermaid').innerHTML = mermaidCode;
             } else {
